@@ -71,14 +71,14 @@ class NormalProbabilityDensityModel:
             self.mu_space[i][j],
             self.sigma_space[i][j],
             self.variance[i][j])
-        self.jdx += 1
+        self.__jdx += 1
         while i < self.bins:
             while j < self.bins:
                 self.__get_variance()
                 self.__update_minima()
-                self.jdx += 1
-            self.jdx = 0
-            self.idx += 1
+                self.__jdx += 1
+            self.__jdx = 0
+            self.__idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
     def plot_parameter_space(self):
