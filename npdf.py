@@ -58,18 +58,19 @@ class NormalProbabilityDensityModel:
             self.sigma_space[i][j],
             self.variance[i][j])        
     def generate_data(self):
+        i, j = self.idx, self.jdx
         self.get_variance()
-        self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
-            self.sigma_space[self.idx][self.jdx],
-            self.variance[self.idx][self.jdx])
-        self.jdx += 1
-        while self.idx < self.bins:
-            while self.jdx < self.bins:
+        self.naive_minima = (i, j), (self.mu_space[i][j],
+            self.sigma_space[i][j],
+            self.variance[i][j])
+        j += 1
+        while i < self.bins:
+            while j < self.bins:
                 self.get_variance()
                 self.update_minima()
-                self.jdx += 1
-            self.jdx = 0
-            self.idx += 1
+                j += 1
+            j = 0
+            i += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance), self.variance)
     def plot_parameter_space(self):
         self.generate_data()
