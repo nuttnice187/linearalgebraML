@@ -19,7 +19,7 @@ class NormalProbabilityDensityModel:
     sigma_space: np.ndarray
     variance: np.ndarray
     hist: Tuple[np.ndarray, np.ndarray]
-    naive_minima: Tuple[float, float, float]
+    naive_minima: Tuple[Tuple[int, int], Tuple[float, float, float]]
     ax: Axes3D
     fig: Figure
     def __init__(self, bins: int, data: pd.Series) -> None:
