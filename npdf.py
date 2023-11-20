@@ -40,7 +40,7 @@ class NormalProbabilityDensityModel:
     def plot_histogram(self) -> None:
         if hasattr(self, 'naive_minima'):
             estimation_type:str = "Maximum Likelihood Estimation Model"
-            self.prob_density_model = naive_minima[2]
+            self.prob_density_model = self.naive_minima[2]
         else:            
             estimation_type:str = "Arithmetic Mean Model"
         title = (" ".join(("{}\nProbability Density of {} VS Normal Model",
