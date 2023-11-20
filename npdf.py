@@ -35,7 +35,7 @@ class NormalProbabilityDensityModel:
         self.lower, self.upper = np.min(data), np.max(data)
         self.x: np.ndarray= np.linspace(self.lower, self.upper, bins)
         self.prob_density: np.ndarray= norm.pdf(self.x, self.mu, self.sigma)
-    def plot_histogram(self):
+    def plot_histogram(self) -> None:
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
         plt.plot(self.x, self.prob_density, 'k', linewidth=2)
@@ -46,19 +46,19 @@ class NormalProbabilityDensityModel:
             "Given mu={:.2f}, sigma={:.2f}"))
             .format(self.data.name, self.mu, self.sigma))
         plt.show()
-    def __get_variance(self) -> float:
+    def __get_variance(self) -> None:
         i, j = self.__idx, self.__jdx
         mu: float= self.mu_space[i][j]
         sigma: float= self.sigma_space[i][j]
         self.variance[i][j] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
-    def __update_minima(self) -> bool:
+    def __update_minima(self) -> None:
         i, j = self.__idx, self.__jdx
         if self.variance[i][j] < self.naive_minima[1][2]:
             self.naive_minima = (i, j), (self.mu_space[i][j],
             self.sigma_space[i][j],
             self.variance[i][j])        
-    def __generate_data(self):
+    def __generate_data(self) -> None:
         self.__idx: int= 0
         self.__jdx: int= 0
         self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
@@ -81,7 +81,7 @@ class NormalProbabilityDensityModel:
             self.__idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
-    def plot_parameter_space(self):
+    def plot_parameter_space(self) -> None:
         self.__generate_data()
         title: str= "\n".join((
             "Contour and Surface of Probability Density Variance",
