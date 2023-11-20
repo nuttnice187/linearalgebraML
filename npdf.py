@@ -38,15 +38,21 @@ class NormalProbabilityDensityModel:
         self.x = np.linspace(self.lower, self.upper, bins)
         self.prob_density_model = norm.pdf(self.x, self.mu, self.sigma)
     def plot_histogram(self) -> None:
+        if hasattr(self, 'naive_minima'):
+            estimation_type:str = "Maximum Likelihood Estimation Model"
+            self.prob_density_model = naive_minima[2]
+        else:            
+            estimation_type:str = "Arithmetic Mean Model"
+        title = (" ".join(("{}\nProbability Density of {} VS Normal Model",
+            "Given mu={:.2f}, sigma={:.2f}"))
+            .format(estimation_type, self.data.name, self.mu, self.sigma))
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
         plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
         plt.axvline(self.mu, color='red')
         plt.axvline(self.mu + self.sigma, color='gray')
         plt.axvline(self.mu - self.sigma, color='gray')
-        plt.title(" ".join(("Probability Density of {} VS Normal Model",
-            "Given mu={:.2f}, sigma={:.2f}"))
-            .format(self.data.name, self.mu, self.sigma))
+        plt.title(title)
         plt.show()
     def __get_variance(self) -> None:
         i, j = self.__idx, self.__jdx
@@ -60,8 +66,10 @@ class NormalProbabilityDensityModel:
         i, j = self.__idx, self.__jdx
         if self.variance[i][j] < self.naive_minima[1][2]:
             self.naive_minima = (i, j), (self.mu_space[i][j],
-            self.sigma_space[i][j],
-            self.variance[i][j]), self.prob_density_model
+                self.sigma_space[i][j],
+                self.variance[i][j]), self.prob_density_model
+            self.mu = self.mu_space[i][j]
+            self.sigma = self.sigma_space[i][j]
     def __generate_data(self) -> None:
         self.__idx = 0
         self.__jdx = 0
