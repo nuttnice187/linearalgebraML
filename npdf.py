@@ -46,18 +46,18 @@ class NormalProbabilityDensityModel:
             "Given mu={:.2f}, sigma={:.2f}"))
             .format(self.data.name, self.mu, self.sigma))
         plt.show()
-    def get_variance(self) -> float:
+    def __get_variance(self) -> float:
         mu: float= self.mu_space[self.idx][self.jdx]
         sigma: float= self.sigma_space[self.idx][self.jdx]
         self.variance[self.idx][self.jdx] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
-    def update_minima(self) -> bool:
+    def __update_minima(self) -> bool:
         i, j = self.idx, self.jdx
         if self.variance[i][j] < self.naive_minima[1][2]:
             self.naive_minima = (i, j), (self.mu_space[i][j],
             self.sigma_space[i][j],
             self.variance[i][j])        
-    def generate_data(self):
+    def __generate_data(self):
         self.idx: int= 0
         self.jdx: int= 0
         self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
@@ -65,7 +65,7 @@ class NormalProbabilityDensityModel:
         self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
-        self.get_variance()
+        self.__get_variance()
         self.naive_minima = (self.idx, self.jdx), (
             self.mu_space[self.idx][self.jdx],
             self.sigma_space[self.idx][self.jdx],
@@ -73,15 +73,15 @@ class NormalProbabilityDensityModel:
         self.jdx += 1
         while self.idx < self.bins:
             while self.jdx < self.bins:
-                self.get_variance()
-                self.update_minima()
+                self.__get_variance()
+                self.__update_minima()
                 self.jdx += 1
             self.jdx = 0
             self.idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
     def plot_parameter_space(self):
-        self.generate_data()
+        self.__generate_data()
         title: str= "\n".join((
             "Contour and Surface of Probability Density Variance",
             "as a Function of mu, sigma Plane",
