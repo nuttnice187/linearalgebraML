@@ -48,7 +48,8 @@ class NormalProbabilityDensityModel:
     def get_variance(self) -> float:
         mu: float= self.mu_space[self.idx][self.jdx]
         sigma: float= self.sigma_space[self.idx][self.jdx]
-        self.variance[self.idx][self.jdx] = np.sum((norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
+        self.variance[self.idx][self.jdx] = np.sum(
+            (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
     def update_minima(self) -> bool:
         if self.variance[self.idx][self.jdx] < self.naive_minima[1][2]:
             self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
@@ -71,8 +72,8 @@ class NormalProbabilityDensityModel:
     def plot_parameter_space(self):
         self.generate_data()
         title: str= "\n".join(("Contour and Surface of Probability Density Variance",
-        "as a Function of mu, sigma Plane",
-        "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
+            "as a Function of mu, sigma Plane",
+            "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
         min_x, min_y, min_z = self.naive_minima[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
@@ -81,7 +82,8 @@ class NormalProbabilityDensityModel:
             rstride=1, cstride=1, alpha=0.5)
         self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10, cmap=cm.cubehelix_r,
             linestyles="solid", offset=0)
-        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10, colors="k", linestyles="solid")
+        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10, colors="k",
+            linestyles="solid")
         self.ax.scatter3D(min_x, min_y, min_z)
         self.ax.set_xlabel("mu")
         self.ax.set_ylabel("sigma")
