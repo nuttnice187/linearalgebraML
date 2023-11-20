@@ -40,7 +40,7 @@ class NormalProbabilityDensityModel:
     def plot_histogram(self) -> None:
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
-        plt.plot(self.x, self.prob_density, 'k', linewidth=2)
+        plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
         plt.axvline(self.mu, color='red')
         plt.axvline(self.mu + self.sigma, color='gray')
         plt.axvline(self.mu - self.sigma, color='gray')
