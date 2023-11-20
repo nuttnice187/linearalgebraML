@@ -27,10 +27,10 @@ class NormalProbabilityDensityModel:
         self.data: pd.Series= data
         self.mu, self.sigma = norm.fit(data)
         self.lower, self.upper = np.min(data), np.max(data)
-        self.variance: np.ndarray= np.empty([bins, bins], dtype=float)
-        self.mu_space: np.ndarray= np.linspace(self.lower, self.upper, bins)
-        self.x: np.ndarray= self.mu_space.copy()
+        self.x: np.ndarray= np.linspace(self.lower, self.upper, bins)
         self.prob_density: np.ndarray= norm.pdf(self.x, self.mu, self.sigma)
+        self.variance: np.ndarray= np.empty([bins, bins], dtype=float)
+        self.mu_space: np.ndarray= self.x.copy()
         self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
