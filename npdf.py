@@ -118,8 +118,7 @@ class NormalProbabilityDensityModel:
 
         plt.title(title.format(min_x, min_y, min_z))
         plt.show()
-    def predict(self, x: float, mu:float=self.mu, sigma: float=self.sigma
-        ) -> float:
+    def predict(self, x: float, mu:float, sigma: float) -> float:
         assert hasattr(self, 'mle'), ' '.join(("MLE has not been fit.",
             "Execute .fit() method, first."))
         f_x = norm.pdf(x, mu, sigma)
