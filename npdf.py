@@ -29,11 +29,6 @@ class NormalProbabilityDensityModel:
         self.lower, self.upper = np.min(data), np.max(data)
         self.x: np.ndarray= np.linspace(self.lower, self.upper, bins)
         self.prob_density: np.ndarray= norm.pdf(self.x, self.mu, self.sigma)
-        self.variance: np.ndarray= np.empty([bins, bins], dtype=float)
-        self.mu_space: np.ndarray= self.x.copy()
-        self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, bins)
-        self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
-            self.sigma_space)
     def plot_histogram(self):
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
@@ -57,6 +52,13 @@ class NormalProbabilityDensityModel:
             self.sigma_space[i][j],
             self.variance[i][j])        
     def generate_data(self):
+        self.idx: int= 0
+        self.jdx: int= 0
+        self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
+        self.mu_space: np.ndarray= self.x.copy()
+        self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
+        self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
+            self.sigma_space)
         self.get_variance()
         self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
             self.sigma_space[self.idx][self.jdx],
