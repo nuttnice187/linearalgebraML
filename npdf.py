@@ -15,8 +15,8 @@ class NormalProbabilityDensityModel:
     discovery of variance for normal probability density parameter space: the mu,
     sigma plane.
     """
-    __idx: int= 0
-    __jdx: int= 0
+    __idx: int
+    __jdx: int
     lower: float
     mu: float
     sigma: float
@@ -47,9 +47,10 @@ class NormalProbabilityDensityModel:
             .format(self.data.name, self.mu, self.sigma))
         plt.show()
     def __get_variance(self) -> float:
-        mu: float= self.mu_space[self.__idx][self.__jdx]
-        sigma: float= self.sigma_space[self.__idx][self.__jdx]
-        self.variance[self.__idx][self.__jdx] = np.sum(
+        i, j = self.__idx, self.__jdx
+        mu: float= self.mu_space[i][j]
+        sigma: float= self.sigma_space[i][j]
+        self.variance[i][j] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
     def __update_minima(self) -> bool:
         i, j = self.__idx, self.__jdx
