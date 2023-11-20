@@ -9,6 +9,12 @@ from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 class NormalProbabilityDensityModel:
+    """
+    Given the number of bins and pandas Series of numeric data, plot probability
+    density histogram VS normal density function and performs naive local minima
+    discovery of variance for normal probability density parameter space: the mu,
+    sigma plane.
+    """
     idx: int= 0
     jdx: int= 0
     lower: float
@@ -60,7 +66,8 @@ class NormalProbabilityDensityModel:
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         self.get_variance()
-        self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
+        self.naive_minima = (self.idx, self.jdx), (
+            self.mu_space[self.idx][self.jdx],
             self.sigma_space[self.idx][self.jdx],
             self.variance[self.idx][self.jdx])
         self.jdx += 1
@@ -71,22 +78,24 @@ class NormalProbabilityDensityModel:
                 self.jdx += 1
             self.jdx = 0
             self.idx += 1
-        self.variance = np.ma.masked_where(~np.isfinite(self.variance), self.variance)
+        self.variance = np.ma.masked_where(~np.isfinite(self.variance),
+            self.variance)
     def plot_parameter_space(self):
         self.generate_data()
-        title: str= "\n".join(("Contour and Surface of Probability Density Variance",
+        title: str= "\n".join((
+            "Contour and Surface of Probability Density Variance",
             "as a Function of mu, sigma Plane",
             "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
         min_x, min_y, min_z = self.naive_minima[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
 
-        self.ax.plot_surface(self.mu_space, self.sigma_space, self.variance, cmap=cm.cubehelix_r,
-            rstride=1, cstride=1, alpha=0.5)
-        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10, cmap=cm.cubehelix_r,
-            linestyles="solid", offset=0)
-        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10, colors="k",
-            linestyles="solid")
+        self.ax.plot_surface(self.mu_space, self.sigma_space, self.variance,
+            cmap=cm.cubehelix_r, rstride=1, cstride=1, alpha=0.5)
+        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10,
+            cmap=cm.cubehelix_r, linestyles="solid", offset=0)
+        self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10,
+            colors="k", linestyles="solid")
         self.ax.scatter3D(min_x, min_y, min_z)
         self.ax.set_xlabel("mu")
         self.ax.set_ylabel("sigma")
