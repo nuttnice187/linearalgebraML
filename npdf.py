@@ -51,7 +51,7 @@ class NormalProbabilityDensityModel:
         mu: float= self.mu_space[i][j]
         sigma: float= self.sigma_space[i][j]
         self.variance[i][j] = np.sum(
-            (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
+            (norm.pdf(self.x, mu, sigma) - self.hist[0])**2)
     def __update_minima(self) -> None:
         i, j = self.__idx, self.__jdx
         if self.variance[i][j] < self.naive_minima[1][2]:
