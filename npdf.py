@@ -15,8 +15,8 @@ class NormalProbabilityDensityModel:
     discovery of variance for normal probability density parameter space: the mu,
     sigma plane.
     """
-    idx: int= 0
-    jdx: int= 0
+    __idx: int= 0
+    __jdx: int= 0
     lower: float
     mu: float
     sigma: float
@@ -47,37 +47,37 @@ class NormalProbabilityDensityModel:
             .format(self.data.name, self.mu, self.sigma))
         plt.show()
     def __get_variance(self) -> float:
-        mu: float= self.mu_space[self.idx][self.jdx]
-        sigma: float= self.sigma_space[self.idx][self.jdx]
-        self.variance[self.idx][self.jdx] = np.sum(
+        mu: float= self.mu_space[self.__idx][self.__jdx]
+        sigma: float= self.sigma_space[self.__idx][self.__jdx]
+        self.variance[self.__idx][self.__jdx] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
     def __update_minima(self) -> bool:
-        i, j = self.idx, self.jdx
+        i, j = self.__idx, self.__jdx
         if self.variance[i][j] < self.naive_minima[1][2]:
             self.naive_minima = (i, j), (self.mu_space[i][j],
             self.sigma_space[i][j],
             self.variance[i][j])        
     def __generate_data(self):
-        self.idx: int= 0
-        self.jdx: int= 0
+        self.__idx: int= 0
+        self.__jdx: int= 0
         self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
         self.mu_space: np.ndarray= self.x.copy()
         self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         self.__get_variance()
-        self.naive_minima = (self.idx, self.jdx), (
-            self.mu_space[self.idx][self.jdx],
-            self.sigma_space[self.idx][self.jdx],
-            self.variance[self.idx][self.jdx])
-        self.jdx += 1
-        while self.idx < self.bins:
-            while self.jdx < self.bins:
+        self.naive_minima = (self.__idx, self.__jdx), (
+            self.mu_space[self.__idx][self.__jdx],
+            self.sigma_space[self.__idx][self.__jdx],
+            self.variance[self.__idx][self.__jdx])
+        self.__jdx += 1
+        while self.__idx < self.bins:
+            while self.__jdx < self.bins:
                 self.__get_variance()
                 self.__update_minima()
-                self.jdx += 1
-            self.jdx = 0
-            self.idx += 1
+                self.__jdx += 1
+            self.__jdx = 0
+            self.__idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
     def plot_parameter_space(self):
