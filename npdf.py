@@ -46,9 +46,10 @@ class NormalProbabilityDensityModel:
             .format(self.data.name, self.mu, self.sigma))
         plt.show()
     def get_variance(self) -> float:
-        mu: float= self.mu_space[self.idx][self.jdx]
-        sigma: float= self.sigma_space[self.idx][self.jdx]
-        self.variance[self.idx][self.jdx] = np.sum(
+        i, j = self.idx, self.jdx
+        mu: float= self.mu_space[i][j]
+        sigma: float= self.sigma_space[i][j]
+        self.variance[i][j] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
     def update_minima(self) -> bool:
         i, j = self.idx, self.jdx
