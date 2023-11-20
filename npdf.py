@@ -43,9 +43,9 @@ class NormalProbabilityDensityModel:
             self.prob_density_model = self.naive_minima[2]
         else:            
             estimation_type:str = "Arithmetic Mean Model"
-        title = (" ".join(("{}\nProbability Density of {} VS Normal Model",
+        title = ("\n".join(("Probability Density of {} VS {}",
             "Given mu={:.2f}, sigma={:.2f}"))
-            .format(estimation_type, self.data.name, self.mu, self.sigma))
+            .format(self.data.name, estimation_type, self.mu, self.sigma))
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
         plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
