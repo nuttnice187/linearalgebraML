@@ -51,10 +51,11 @@ class NormalProbabilityDensityModel:
         self.variance[self.idx][self.jdx] = np.sum(
             (norm.pdf(self.x, mu, sigma) - self.prob_density)**2)
     def update_minima(self) -> bool:
-        if self.variance[self.idx][self.jdx] < self.naive_minima[1][2]:
-            self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
-            self.sigma_space[self.idx][self.jdx],
-            self.variance[self.idx][self.jdx])        
+        i, j = self.idx, self.jdx
+        if self.variance[i][j] < self.naive_minima[1][2]:
+            self.naive_minima = (i, j), (self.mu_space[i][j],
+            self.sigma_space[i][j],
+            self.variance[i][j])        
     def generate_data(self):
         self.get_variance()
         self.naive_minima = (self.idx, self.jdx), (self.mu_space[self.idx][self.jdx],
