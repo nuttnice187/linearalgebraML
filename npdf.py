@@ -95,7 +95,7 @@ class NormalProbabilityDensityModel:
             self.__idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
-    def plot_parameter_space(self) -> None:
+    def fit(self) -> None:
         self.__generate_data()
         title: str= "\n".join((
             "Contour and Surface of Probability Density Variance",
