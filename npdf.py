@@ -118,9 +118,10 @@ class NormalProbabilityDensityModel:
 
         plt.title(title.format(min_x, min_y, min_z))
         plt.show()
-    def predict(self, x: float, mu: Optional[float], sigma: Optional[float]) -> float:
+    def predict(self, x: float, mu: Optional[float]=None, sigma: Optional[float]=None
+        ) -> float:
         if ~(mu & sigma):
-            assert hasattr(self, 'mle'), ' '.join(("Fit model or provide mu & sigma"))
+            assert hasattr(self, 'mle'), "Fit model or provide mu & sigma"
             mu, sigma = self.mu, self.sigma
         f_x = norm.pdf(x, mu, sigma)
         return f_x
