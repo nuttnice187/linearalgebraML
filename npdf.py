@@ -21,11 +21,13 @@ class NormalProbabilityDensityModel:
     mu: float
     sigma: float
     upper: float
+    x: np.ndarray
+    prob_density_model: np.ndarray
     mu_space: np.ndarray
     sigma_space: np.ndarray
     variance: np.ndarray
     hist: Tuple[np.ndarray, np.ndarray]
-    naive_minima: Tuple[Tuple[int, int], Tuple[float, float, float]]
+    mle: Tuple[Tuple[int, int], Tuple[float, float, float], np.ndarray]
     ax: Axes3D
     fig: Figure
     def __init__(self, bins: int, data: pd.Series) -> None:
@@ -33,44 +35,56 @@ class NormalProbabilityDensityModel:
         self.data: pd.Series= data
         self.mu, self.sigma = norm.fit(data)
         self.lower, self.upper = np.min(data), np.max(data)
-        self.x: np.ndarray= np.linspace(self.lower, self.upper, bins)
-        self.prob_density: np.ndarray= norm.pdf(self.x, self.mu, self.sigma)
+        self.x = np.linspace(self.lower, self.upper, bins)
+        self.prob_density_model = norm.pdf(self.x, self.mu, self.sigma)
     def plot_histogram(self) -> None:
+        if hasattr(self, 'mle'):
+            estimation_type:str = "Maximum Likelihood Estimation Model"
+            self.prob_density_model = self.mle[2]
+        else:            
+            estimation_type:str = "Arithmetic Mean Model"
+        title = ("\n".join(("Probability Density of {} VS {}",
+            "Given mu={:.2f}, sigma={:.2f}"))
+            .format(self.data.name, estimation_type, self.mu, self.sigma))
         self.hist = plt.hist(self.data,
             bins=self.bins, density=True)
-        plt.plot(self.x, self.prob_density, 'k', linewidth=2)
+        plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
         plt.axvline(self.mu, color='red')
         plt.axvline(self.mu + self.sigma, color='gray')
         plt.axvline(self.mu - self.sigma, color='gray')
-        plt.title(" ".join(("Probability Density of {} VS Normal Model",
-            "Given mu={:.2f}, sigma={:.2f}"))
-            .format(self.data.name, self.mu, self.sigma))
+        plt.title(title)
         plt.show()
     def __get_variance(self) -> None:
         i, j = self.__idx, self.__jdx
         mu: float= self.mu_space[i][j]
-        sigma: float= self.sigma_space[i][j]
+        sigma = self.sigma_space[i][j]
+        self.prob_density_model = norm.pdf(self.x, mu, sigma)
+        prob_density_actual: np.ndarray= self.hist[0]
         self.variance[i][j] = np.sum(
-            (norm.pdf(self.x, mu, sigma) - self.hist[0])**2)
+            (self.prob_density_model - prob_density_actual)**2)
     def __update_minima(self) -> None:
         i, j = self.__idx, self.__jdx
-        if self.variance[i][j] < self.naive_minima[1][2]:
-            self.naive_minima = (i, j), (self.mu_space[i][j],
-            self.sigma_space[i][j],
-            self.variance[i][j])        
+        if self.variance[i][j] < self.mle[1][2]:
+            self.mle = (i, j), (self.mu_space[i][j],
+                self.sigma_space[i][j],
+                self.variance[i][j]), self.prob_density_model
+            self.mu = self.mu_space[i][j]
+            self.sigma = self.sigma_space[i][j]
     def __generate_data(self) -> None:
-        self.__idx: int= 0
-        self.__jdx: int= 0
-        self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
-        self.mu_space: np.ndarray= self.x.copy()
-        self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
+        self.__idx = 0
+        self.__jdx = 0
+        self.variance = np.empty([self.bins, self.bins], dtype=float)
+        self.mu_space = self.x.copy()
+        self.sigma_space = np.linspace(0.5, 2*self.sigma, self.bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         self.__get_variance()
-        self.naive_minima = (self.__idx, self.__jdx), (
+        self.mle = (self.__idx, self.__jdx), (
             self.mu_space[self.__idx][self.__jdx],
             self.sigma_space[self.__idx][self.__jdx],
-            self.variance[self.__idx][self.__jdx])
+            self.variance[self.__idx][self.__jdx]), norm.pdf(self.x,
+                self.mu_space[self.__idx][self.__jdx],
+                self.sigma_space[self.__idx][self.__jdx])
         self.__jdx += 1
         while self.__idx < self.bins:
             while self.__jdx < self.bins:
@@ -81,13 +95,13 @@ class NormalProbabilityDensityModel:
             self.__idx += 1
         self.variance = np.ma.masked_where(~np.isfinite(self.variance),
             self.variance)
-    def plot_parameter_space(self) -> None:
+    def fit(self) -> None:
         self.__generate_data()
         title: str= "\n".join((
             "Contour and Surface of Probability Density Variance",
             "as a Function of mu, sigma Plane",
             "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
-        min_x, min_y, min_z = self.naive_minima[1]
+        min_x, min_y, min_z = self.mle[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
 
