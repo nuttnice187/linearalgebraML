@@ -46,8 +46,7 @@ class NormalProbabilityDensityModel:
         title = ("\n".join(("Probability Density of {} VS {}",
             "Given mu={:.2f}, sigma={:.2f}"))
             .format(self.data.name, estimation_type, self.mu, self.sigma))
-        self.hist = plt.hist(self.data,
-            bins=self.bins, density=True)
+        self.hist = plt.hist(self.data, bins=self.bins, density=True)
         plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
         plt.axvline(self.mu, color='red')
         plt.axvline(self.mu + self.sigma, color='gray')
@@ -119,3 +118,10 @@ class NormalProbabilityDensityModel:
 
         plt.title(title.format(min_x, min_y, min_z))
         plt.show()
+    def predict(self, x: float, mu: Optional[float]=None, sigma: Optional[float]=None
+        ) -> float:
+        if not (mu and sigma):
+            assert hasattr(self, 'mle'), '\n'.join(("MLE does not exist.",
+                "Execute fit() method, first, or provide mu and sigma."))
+            mu, sigma = self.mu, self.sigma
+        return norm.pdf(x, mu, sigma)
