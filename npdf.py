@@ -59,21 +59,21 @@ class NormalProbabilityDensityModel:
             self.sigma_space[i][j],
             self.variance[i][j])        
     def __generate_data(self):
-        i = self.__idx = 0
-        j = self.__jdx = 0
+        self.__idx: int= 0
+        self.__jdx: int= 0
         self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
         self.mu_space: np.ndarray= self.x.copy()
         self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         self.__get_variance()
-        self.naive_minima = (i, j), (
-            self.mu_space[i][j],
-            self.sigma_space[i][j],
-            self.variance[i][j])
+        self.naive_minima = (self.__idx, self.__jdx), (
+            self.mu_space[self.__idx][self.__jdx],
+            self.sigma_space[self.__idx][self.__jdx],
+            self.variance[self.__idx][self.__jdx])
         self.__jdx += 1
-        while i < self.bins:
-            while j < self.bins:
+        while self.__idx < self.bins:
+            while self.__jdx < self.bins:
                 self.__get_variance()
                 self.__update_minima()
                 self.__jdx += 1
