@@ -53,9 +53,9 @@ class NormalProbabilityDensityModel:
             self.sigma_space[i][j],
             self.variance[i][j])        
     def generate_data(self):
-        self.variance: np.ndarray= np.empty([bins, bins], dtype=float)
+        self.variance: np.ndarray= np.empty([self.bins, self.bins], dtype=float)
         self.mu_space: np.ndarray= self.x.copy()
-        self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, bins)
+        self.sigma_space: np.ndarray= np.linspace(0.5, 2*self.sigma, self.bins)
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         i, j = self.idx, self.jdx
