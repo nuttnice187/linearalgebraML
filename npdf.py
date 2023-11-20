@@ -46,8 +46,7 @@ class NormalProbabilityDensityModel:
         title = ("\n".join(("Probability Density of {} VS {}",
             "Given mu={:.2f}, sigma={:.2f}"))
             .format(self.data.name, estimation_type, self.mu, self.sigma))
-        self.hist = plt.hist(self.data,
-            bins=self.bins, density=True)
+        self.hist = plt.hist(self.data, bins=self.bins, density=True)
         plt.plot(self.x, self.prob_density_model, 'k', linewidth=2)
         plt.axvline(self.mu, color='red')
         plt.axvline(self.mu + self.sigma, color='gray')
