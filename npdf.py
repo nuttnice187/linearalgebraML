@@ -121,7 +121,7 @@ class NormalProbabilityDensityModel:
     def predict(self, x: float, mu: Optional[float]=None, sigma: Optional[float]=None
         ) -> float:
         if not (mu and sigma):
-            assert hasattr(self, 'mve'), '\n'.join(("mve does not exist.",
+            assert hasattr(self, 'mve'), '\n'.join(("MVE does not exist.",
                 "Execute fit() method, first, or provide mu and sigma."))
             mu, sigma = self.mu, self.sigma
         return norm.pdf(x, mu, sigma)
