@@ -27,7 +27,7 @@ class NormalProbabilityDensityModel:
     sigma_space: np.ndarray
     variance: np.ndarray
     hist: Tuple[np.ndarray, np.ndarray]
-    mle: Tuple[Tuple[int, int], Tuple[float, float, float], np.ndarray]
+    mve: Tuple[Tuple[int, int], Tuple[float, float, float], np.ndarray]
     ax: Axes3D
     fig: Figure
     def __init__(self, bins: int, data: pd.Series) -> None:
@@ -38,9 +38,9 @@ class NormalProbabilityDensityModel:
         self.x = np.linspace(self.lower, self.upper, bins)
         self.prob_density_model = norm.pdf(self.x, self.mu, self.sigma)
     def plot_histogram(self) -> None:
-        if hasattr(self, 'mle'):
-            estimation_type:str = "Maximum Likelihood Estimation Model"
-            self.prob_density_model = self.mle[2]
+        if hasattr(self, 'mve'):
+            estimation_type:str = "Minimum Variance Estimation Model"
+            self.prob_density_model = self.mve[2]
         else:            
             estimation_type:str = "Arithmetic Mean Model"
         title = ("\n".join(("Probability Density of {} VS {}",
@@ -63,8 +63,8 @@ class NormalProbabilityDensityModel:
             (self.prob_density_model - prob_density_actual)**2)
     def __update_minima(self) -> None:
         i, j = self.__idx, self.__jdx
-        if self.variance[i][j] < self.mle[1][2]:
-            self.mle = (i, j), (self.mu_space[i][j],
+        if self.variance[i][j] < self.mve[1][2]:
+            self.mve = (i, j), (self.mu_space[i][j],
                 self.sigma_space[i][j],
                 self.variance[i][j]), self.prob_density_model
             self.mu = self.mu_space[i][j]
@@ -78,7 +78,7 @@ class NormalProbabilityDensityModel:
         self.mu_space, self.sigma_space = np.meshgrid(self.mu_space,
             self.sigma_space)
         self.__get_variance()
-        self.mle = (self.__idx, self.__jdx), (
+        self.mve = (self.__idx, self.__jdx), (
             self.mu_space[self.__idx][self.__jdx],
             self.sigma_space[self.__idx][self.__jdx],
             self.variance[self.__idx][self.__jdx]), norm.pdf(self.x,
@@ -100,7 +100,7 @@ class NormalProbabilityDensityModel:
             "Contour and Surface of Probability Density Variance",
             "as a Function of mu, sigma Plane",
             "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
-        min_x, min_y, min_z = self.mle[1]
+        min_x, min_y, min_z = self.mve[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
 
@@ -121,7 +121,7 @@ class NormalProbabilityDensityModel:
     def predict(self, x: float, mu: Optional[float]=None, sigma: Optional[float]=None
         ) -> float:
         if not (mu and sigma):
-            assert hasattr(self, 'mle'), '\n'.join(("MLE does not exist.",
+            assert hasattr(self, 'mve'), '\n'.join(("mve does not exist.",
                 "Execute fit() method, first, or provide mu and sigma."))
             mu, sigma = self.mu, self.sigma
         return norm.pdf(x, mu, sigma)
