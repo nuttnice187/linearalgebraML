@@ -99,7 +99,7 @@ class NormalProbabilityDensityModel:
         title: str= "\n".join((
             "Contour and Surface of Probability Density Variance",
             "as a Function of mu, sigma Plane",
-            "Naive Minimum Variance at ({:.2f}, {:.2f}, {:.2f})"))
+            "Naive Minimum Variance at ({:.2f}, {:.2f}, {%.2E})"))
         min_x, min_y, min_z = self.mle[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
