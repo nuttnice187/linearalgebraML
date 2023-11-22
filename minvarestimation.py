@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d.axes3d import Axes3D
 class NormalProbabilityDensityModel:
     """
     Given the number of bins and pandas Series of numeric data, plot probability
-    density histogram VS normal density function and performs naive local minima
+    density histogram VS normal density function and perform naive local minima
     discovery of variance for normal probability density parameter space: the mu,
     sigma plane.
     """
@@ -31,8 +31,7 @@ class NormalProbabilityDensityModel:
     ax: Axes3D
     fig: Figure
     def __init__(self, bins: int, data: pd.Series) -> None:
-        self.bins = bins
-        self.data: pd.Series= data
+        self.bins, self.data = bins, data
         self.mu, self.sigma = norm.fit(data)
         self.lower, self.upper = np.min(data), np.max(data)
         self.x = np.linspace(self.lower, self.upper, bins)
@@ -55,7 +54,7 @@ class NormalProbabilityDensityModel:
         plt.show()
     def __get_variance(self) -> None:
         i, j = self.__idx, self.__jdx
-        mu: float= self.mu_space[i][j]
+        mu = self.mu_space[i][j]
         sigma = self.sigma_space[i][j]
         self.prob_density_model = norm.pdf(self.x, mu, sigma)
         prob_density_actual: np.ndarray= self.hist[0]
@@ -70,8 +69,7 @@ class NormalProbabilityDensityModel:
             self.mu = self.mu_space[i][j]
             self.sigma = self.sigma_space[i][j]
     def __generate_data(self) -> None:
-        self.__idx = 0
-        self.__jdx = 0
+        self.__idx, self.__jdx = 0, 0
         self.variance = np.empty([self.bins, self.bins], dtype=float)
         self.mu_space = self.x.copy()
         self.sigma_space = np.linspace(0.5, 2*self.sigma, self.bins)
@@ -103,7 +101,6 @@ class NormalProbabilityDensityModel:
         min_x, min_y, min_z = self.mve[1]
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection="3d")
-
         self.ax.plot_surface(self.mu_space, self.sigma_space, self.variance,
             cmap=cm.cubehelix_r, rstride=1, cstride=1, alpha=0.5)
         self.ax.contour(self.mu_space, self.sigma_space, self.variance, 10,
@@ -115,7 +112,6 @@ class NormalProbabilityDensityModel:
         self.ax.set_ylabel("sigma")
         self.ax.set_zlabel("Variance")
         self.ax.grid(visible=False)
-
         plt.title(title.format(min_x, min_y, min_z))
         plt.show()
     def predict(self, x: float, mu: Optional[float]=None, sigma: Optional[float]=None
