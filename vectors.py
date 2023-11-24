@@ -19,7 +19,7 @@ class Vector:
         ) -> None:
         assert len(origin) == len(direction), ' '.join(("Origin and direction",
             "must have the same number of elements."))
-        self.origin, self.direction, self.name = (origin, direction, name)
+        self.origin, self.direction, self.name = origin, direction, name
         self.magnitude = math.sqrt(np.sum(np.array(self.direction)**2))
 
 class VectorPlot:
